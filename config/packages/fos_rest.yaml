@@ -1,0 +1,12 @@
+fos_rest:
+    param_fetcher_listener:  true
+    allowed_methods_listener:  true
+    routing_loader:
+        default_format: json
+        include_format: false
+    view:
+        mime_types:
+            json: ['application/json']
+    body_converter:
+        enabled: true
+        validate: true
