@@ -1,12 +1,19 @@
 fos_rest:
     param_fetcher_listener:  true
     allowed_methods_listener:  true
-    routing_loader:
-        default_format: json
-        include_format: false
+    routing_loader: false
     view:
         mime_types:
             json: ['application/json']
+    body_listener:
+        throw_exception_on_unsupported_content_type: true
     body_converter:
         enabled: true
         validate: true
+        validation_errors_argument: validationErrors
+    exception:
+        enabled: true
+    versioning:
+        enabled: true
+        resolvers:
+            custom_header: true # X-Accept-Version header
