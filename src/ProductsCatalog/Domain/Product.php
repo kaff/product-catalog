@@ -29,6 +29,11 @@ class Product
         }
     }
 
+    public function getUid(): Uid
+    {
+        return $this->uid;
+    }
+
     private function guardName(string $name): void
     {
         //not implemented yet

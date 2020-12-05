@@ -29,3 +29,15 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Repository\ProductRepository:
+        arguments:
+            - "%kernel.cache_dir%/storage"
+
+    App\Controller\ProductsController:
+        arguments:
+            $addNewProductUseCase: '@ProductsCatalog\Application\UseCase\Interactor\Interactor'
+
+    ProductsCatalog\Application\UseCase\Interactor\Interactor:
+        arguments:
+            - '@App\Repository\ProductRepository'

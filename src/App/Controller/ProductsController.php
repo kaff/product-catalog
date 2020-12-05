@@ -5,11 +5,20 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
+use ProductsCatalog\Application\UseCase;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ProductsController extends ApiController
 {
+    /** @var UseCase\AddNewProduct */
+    private $addNewProductUseCase;
+
+    public function __construct(UseCase\AddNewProduct $addNewProductUseCase)
+    {
+        $this->addNewProductUseCase = $addNewProductUseCase;
+    }
+
     /**
      * @Rest\Route(
      *     "api/products",
@@ -17,17 +26,17 @@ class ProductsController extends ApiController
      *     condition="request.attributes.get('version') == 'v1'",
      *     methods={"POST"}
      * )
-     * @ParamConverter("post", converter="fos_rest.request_body")
+     * @ParamConverter("request", converter="fos_rest.request_body")
      */
     public function postProductsAction(
-        Rest\Post $post,
+        UseCase\AddNewProduct\Request $request,
         ConstraintViolationListInterface $validationErrors
     ) {
         try {
             if($validationErrors->count()) {
                 return $this->prepareValidationErrorsResponse($validationErrors);
             }
-            
+
             return $this->preparePostSuccessResponse(['test'], $this->prepareLocationHeader());
         } catch (\Error $error) {
             $this->logError($error);
