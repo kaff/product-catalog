@@ -8,6 +8,7 @@ use App\Presenter\Product;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use ProductsCatalog\Application\UseCase;
 use ProductsCatalog\Shared\Uid;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
@@ -20,13 +21,19 @@ class ProductsController extends ApiController
 
     /** @var Product\Presenter */
     private $productPresenter;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     public function __construct(
         UseCase\AddNewProduct $addNewProductUseCase,
-        Product\Presenter $productPresenter
+        Product\Presenter $productPresenter,
+        LoggerInterface $logger
     ) {
         $this->addNewProductUseCase = $addNewProductUseCase;
         $this->productPresenter = $productPresenter;
+        $this->logger = $logger;
     }
 
     /**
@@ -55,7 +62,7 @@ class ProductsController extends ApiController
                 $this->prepareLocationHeader($response->product->getUid())
             );
         } catch (\Throwable $error) {
-            $this->logError($error);
+            $this->logger->error($error);
             throw new \RuntimeException('Internal error');
         }
     }

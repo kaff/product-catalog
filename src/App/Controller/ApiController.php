@@ -54,9 +54,4 @@ abstract class ApiController extends AbstractFOSRestController
             )
         );
     }
-
-    protected function logError(\Throwable $error): void
-    {
-        //not implemented yet
-    }
 }
