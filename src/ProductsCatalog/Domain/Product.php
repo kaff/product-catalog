@@ -34,6 +34,16 @@ class Product
         return $this->uid;
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getPrice(): Money
+    {
+        return $this->price;
+    }
+
     private function guardName(string $name): void
     {
         //not implemented yet

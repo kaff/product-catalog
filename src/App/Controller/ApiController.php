@@ -39,7 +39,9 @@ abstract class ApiController extends AbstractFOSRestController
         return $messages;
     }
 
-    // @TODO am I able to define type for $data?
+    /**
+     * @param mixed $data
+     */
     protected function preparePostSuccessResponse($data, string $locationHeader): Response
     {
         return $this->handleView(

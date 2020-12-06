@@ -21,7 +21,8 @@ final class Uid
 
     private function generate(): string
     {
-        return md5(uniqid(mt_rand(), true));
+        //naive uid generation
+        return md5(uniqid((string)mt_rand(), true));
     }
 
     private function guardHashPattern(string $hash): void

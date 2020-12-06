@@ -27,4 +27,14 @@ class Money
             throw new \InvalidArgumentException('Amount cannot be less than 0');
         }
     }
+
+    public function getAmount(): int
+    {
+        return $this->amount;
+    }
+
+    public function getCurrency(): Currency
+    {
+        return $this->currency;
+    }
 }

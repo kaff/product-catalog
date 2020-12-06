@@ -4,19 +4,29 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Presenter\Product;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use ProductsCatalog\Application\UseCase;
+use ProductsCatalog\Shared\Uid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ProductsController extends ApiController
 {
+    private const ROUTE_PRODUCTS_GET = 'app_products_getproducts';
+
     /** @var UseCase\AddNewProduct */
     private $addNewProductUseCase;
 
-    public function __construct(UseCase\AddNewProduct $addNewProductUseCase)
-    {
+    /** @var Product\Presenter */
+    private $productPresenter;
+
+    public function __construct(
+        UseCase\AddNewProduct $addNewProductUseCase,
+        Product\Presenter $productPresenter
+    ) {
         $this->addNewProductUseCase = $addNewProductUseCase;
+        $this->productPresenter = $productPresenter;
     }
 
     /**
@@ -33,12 +43,18 @@ class ProductsController extends ApiController
         ConstraintViolationListInterface $validationErrors
     ) {
         try {
-            if($validationErrors->count()) {
+            if ($validationErrors->count()) {
                 return $this->prepareValidationErrorsResponse($validationErrors);
             }
 
-            return $this->preparePostSuccessResponse(['test'], $this->prepareLocationHeader());
-        } catch (\Error $error) {
+            $response = $this->addNewProductUseCase->execute($request);
+            $productViewObject = $this->productPresenter->present($response);
+
+            return $this->preparePostSuccessResponse(
+                $productViewObject,
+                $this->prepareLocationHeader($response->product->getUid())
+            );
+        } catch (\Throwable $error) {
             $this->logError($error);
             throw new \RuntimeException('Internal error');
         }
@@ -55,15 +71,15 @@ class ProductsController extends ApiController
     public function getProductsAction($uid)
     {
         //not implemented yet
-        //method needed for proper URL generation for Location header
+        //method is needed for proper URL generation for Location header
     }
 
-    private function prepareLocationHeader()
+    private function prepareLocationHeader(Uid $uid)
     {
         return $this->generateUrl(
-            'app_products_getproducts',
+            self::ROUTE_PRODUCTS_GET,
             [
-                'uid' => '__SOME__UID__'
+                'uid' => $uid
             ]
         );
     }
