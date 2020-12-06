@@ -59,7 +59,7 @@ class ProductsController extends ApiController
 
             return $this->preparePostSuccessResponse(
                 $productViewObject,
-                $this->prepareLocationHeader($response->product->getUid())
+                $this->prepareLocationHeaderValue($response->product->getUid())
             );
         } catch (\Throwable $error) {
             $this->logger->error($error);
@@ -81,7 +81,7 @@ class ProductsController extends ApiController
         //method is needed for proper URL generation for Location header
     }
 
-    private function prepareLocationHeader(Uid $uid)
+    private function prepareLocationHeaderValue(Uid $uid)
     {
         return $this->generateUrl(
             self::ROUTE_PRODUCTS_GET,

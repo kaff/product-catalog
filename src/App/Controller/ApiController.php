@@ -49,7 +49,10 @@ abstract class ApiController extends AbstractFOSRestController
                 $data,
                 Response::HTTP_CREATED,
                 [
-                    'Location' => $locationHeader
+                    'Location' => $locationHeader,
+                    'Cache-Control' => 'no-cache, no-store, private',
+                    'Pragma' => 'no-cache',
+                    'Expires' => 0
                 ]
             )
         );
