@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presenter\Product;
 
-class ViewObject
+final class ViewObject
 {
     /** @var string */
     public $uid;

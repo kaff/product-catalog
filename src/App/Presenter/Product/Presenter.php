@@ -6,7 +6,7 @@ namespace App\Presenter\Product;
 
 use ProductsCatalog\Application\UseCase\AddNewProduct\Response;
 
-class Presenter
+final class Presenter
 {
     public function present(Response $response): ViewObject
     {
