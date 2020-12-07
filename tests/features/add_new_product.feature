@@ -1,0 +1,96 @@
+Feature:
+  In order to present offers to customers
+  As a shop owner
+  I want to have the possibility to create a new product
+
+  Scenario: Can create product
+    Given the request body is:
+    """
+    {
+      "name": "Product name",
+      "price_amount": 2345,
+      "price_currency": "PLN"
+    }
+    """
+    And the "Content-Type" request header is "application/json"
+    When I request "api/products" using HTTP POST
+    Then the response code is 201
+    And the "Location" response header matches "/\/api\/products\/[a-f0-9]{32}/"
+    Then the response body matches:
+    """
+    /\"uid\": \"[a-f0-9]{32}\"/
+    """
+    And the response body contains JSON:
+    """
+    {
+      "name": "Product name",
+      "price_amount": 2345,
+      "price_currency": "PLN"
+    }
+    """
+
+  Scenario: Receive a error message when request format is invalid
+    Given the request body is:
+    """
+    {
+      "name": "Product
+    }
+    """
+    And the "Content-Type" request header is "application/json"
+    When I request "api/products" using HTTP POST
+    Then the response code is 400
+    And the response body contains JSON:
+    """
+    {
+      "code": 400,
+      "message": "Invalid json message received"
+    }
+    """
+
+  Scenario: Receive an error message when there is a lack of required data
+    Given the request body is:
+    """
+    {
+      "name": "",
+      "price_amount": "-1",
+      "price_currency": ""
+    }
+    """
+    And the "Content-Type" request header is "application/json"
+    When I request "api/classes" using HTTP POST
+    Then the response code is 400
+    And the response body contains JSON:
+    """
+      {
+          "code": 400,
+          "error": "Validation error",
+          "messages": {
+            "name": "This value is too short. It should have 1 character or more.",
+            "priceAmount": "This value should be either positive or zero.",
+            "priceCurrency": "This value should have exactly 3 characters."
+          }
+      }
+    """
+
+  Scenario: Receive an error message when name is longer than 255 characters
+    Given the request body is:
+    """
+    {
+      "name": "A very long but extremely exciting name for a class, A very long but extremely exciting name for a class, A very long but extremely exciting name for a class, A very long but extremely exciting name for a class, A very long but extremely exciting name for a class ",
+      "price_amount": 2345,
+      "price_currency": "PLN"
+    }
+    """
+    And the "Content-Type" request header is "application/json"
+    When I request "api/classes" using HTTP POST
+    Then the response code is 400
+    And the response body contains JSON:
+    """
+      {
+          "code": 400,
+          "error": "Validation error",
+          "messages": {
+              "name": "This value is too long. It should have 255 characters or less."
+          }
+      }
+    """

@@ -1,0 +1,19 @@
+ProductsCatalog\Application\UseCase\AddNewProduct\Request:
+    properties:
+        name:
+            - NotBlank: ~
+            - Type:
+                  type: 'alnum'
+            - Length:
+                  max: 255
+                  min: 1
+        priceAmount:
+            - NotBlank: ~
+            - PositiveOrZero: ~
+        priceCurrency:
+            - NotBlank: ~
+            - Type:
+                type: 'alpha'
+            - Length:
+                  max: 3
+                  min: 3

@@ -1,0 +1,10 @@
+ProductsCatalog\Application\UseCase\AddNewProduct\Request:
+    properties:
+        name:
+            type: string
+        priceAmount:
+            type: int
+            serialized_name: price_amount
+        priceCurrency:
+            type: string
+            serialized_name: price_currency
