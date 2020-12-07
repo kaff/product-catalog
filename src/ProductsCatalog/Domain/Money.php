@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ProductsCatalog\Domain;
 
-class Money
+final class Money
 {
     /** @var int */
     private $amount;
