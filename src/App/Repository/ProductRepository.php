@@ -29,7 +29,7 @@ class ProductRepository implements ApplicationProductRepository
         return $product;
     }
 
-    private function saveInStorage($data)
+    private function saveInStorage(array $data)
     {
         file_put_contents($this->storagePath, serialize($data));
     }

@@ -21,9 +21,8 @@ class ProductsController extends ApiController
 
     /** @var Product\Presenter */
     private $productPresenter;
-    /**
-     * @var LoggerInterface
-     */
+
+    /** @var LoggerInterface */
     private $logger;
 
     public function __construct(

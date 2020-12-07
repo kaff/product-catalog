@@ -47,5 +47,6 @@ class Product
     private function guardName(string $name): void
     {
         //not implemented yet
+        //throw new InvalidProductNameException
     }
 }
