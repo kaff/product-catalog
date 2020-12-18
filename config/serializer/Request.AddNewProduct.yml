@@ -1,4 +1,4 @@
-ProductsCatalog\Application\UseCase\AddNewProduct\Request:
+App\Request\AddNewProduct:
     properties:
         name:
             type: string
