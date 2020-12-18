@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
-namespace ProductsCatalog\Application\UseCase\Interactor;
+namespace ProductsCatalog\Application\Command;
 
+use ProductsCatalog\Application\Bus\CommandBus\Command;
+use ProductsCatalog\Application\Bus\CommandBus\CommandHandler;
 use ProductsCatalog\Application\Repository\ProductRepository;
-use ProductsCatalog\Application\UseCase\AddNewProduct;
 use ProductsCatalog\Domain\Currency;
 use ProductsCatalog\Domain\Money;
 use ProductsCatalog\Domain\Product;
+use ProductsCatalog\Shared\Uid;
 
-class Interactor implements AddNewProduct
+class AddNewProductHandler implements CommandHandler
 {
     /** @var ProductRepository */
     private $productRepository;
@@ -20,35 +22,27 @@ class Interactor implements AddNewProduct
         $this->productRepository = $productRepository;
     }
 
-    public function execute(AddNewProduct\Request $request): AddNewProduct\Response
+    /**
+     * @param \ProductsCatalog\Application\Command\AddNewProductCommand $command
+     */
+    public function handle(Command $command): void
     {
         $product = new Product(
-            $request->name,
+            $command->getName(),
             new Money(
-                $request->priceAmount,
-                new Currency($request->priceCurrency)
-            )
+                $command->getPriceAmount(),
+                new Currency($command->getPriceCurrency())
+            ),
+            new Uid($command->getUid())
         );
 
         $this->productRepository->save($product);
         $creationDate = new \DateTime();
         $this->dispatchProductCreatedEvent($product, $creationDate);
-
-        return $this->mapToResponse($product, $creationDate);
     }
 
     private function dispatchProductCreatedEvent(Product $product, \DateTimeInterface $creationDate): void
     {
         //not implemented yet
-    }
-
-    private function mapToResponse(Product $product, \DateTimeInterface $creationDate): AddNewProduct\Response
-    {
-        //it could be external mapper class
-        $response = new AddNewProduct\Response();
-        $response->product = clone $product;
-        $response->creationDate = $creationDate;
-
-        return $response;
     }
 }

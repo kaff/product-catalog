@@ -36,8 +36,10 @@ services:
 
     App\Controller\ProductsController:
         arguments:
-            $addNewProductUseCase: '@ProductsCatalog\Application\UseCase\Interactor\Interactor'
+            $commandBus: '@App\Bus\CommandBus\CommandBusAdapter'
 
-    ProductsCatalog\Application\UseCase\Interactor\Interactor:
+    ProductsCatalog\Application\Command\AddNewProductHandler:
         arguments:
             - '@App\Repository\ProductRepository'
+        tags:
+            - { name: tactician.handler, command: ProductsCatalog\Application\Command\AddNewProductCommand }

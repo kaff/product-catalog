@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Queue\Status;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use ProductsCatalog\Shared\Uid;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
@@ -39,17 +41,21 @@ abstract class ApiController extends AbstractFOSRestController
         return $messages;
     }
 
-    /**
-     * @param mixed $data
-     */
-    protected function preparePostSuccessResponse($data, string $locationHeader): Response
+    protected function preparePostSuccessResponse(Status $status, Uid $uid): Response
     {
         return $this->handleView(
             $this->view(
-                $data,
-                Response::HTTP_CREATED,
                 [
-                    'Location' => $locationHeader,
+                    '_links' => [
+                      'status' => [
+                          'href' => '//example.com/api/products/status/'.$uid
+                      ]
+                    ],
+                    'status' => $status,
+                    'uid' => $uid
+                ],
+                Response::HTTP_ACCEPTED,
+                [
                     'Cache-Control' => 'no-cache, no-store, private',
                     'Pragma' => 'no-cache',
                     'Expires' => 0
