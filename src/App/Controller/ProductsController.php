@@ -10,6 +10,7 @@ use App\Request;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use ProductsCatalog\Application\Bus\CommandBus\CommandBus;
 use ProductsCatalog\Application\Command\AddNewProductCommand;
+use ProductsCatalog\Application\Query\GetProduct;
 use ProductsCatalog\Shared\Exception\InvalidUidHashException;
 use ProductsCatalog\Shared\Uid;
 use Psr\Log\LoggerInterface;
@@ -29,13 +30,18 @@ class ProductsController extends ApiController
     /** @var LoggerInterface */
     private $logger;
 
+    /** @var GetProduct\Query */
+    private $getProductQuery;
+
     public function __construct(
         CommandBus $commandBus,
         Product\Presenter $productPresenter,
+        GetProduct\Query $getProductQuery,
         LoggerInterface $logger
     ) {
         $this->commandBus = $commandBus;
         $this->productPresenter = $productPresenter;
+        $this->getProductQuery = $getProductQuery;
         $this->logger = $logger;
     }
 
@@ -66,7 +72,7 @@ class ProductsController extends ApiController
                 $request->priceCurrency
             );
 
-            //we can make query here to make some checks, ex. unique name
+            //we can make query here to make some checks, ex. uniqueness of the name
 
             $this->commandBus->handle($command);
 
@@ -76,6 +82,7 @@ class ProductsController extends ApiController
             );
         } catch (\Throwable $error) {
             $this->logger->error($error);
+
             throw new \RuntimeException('Internal error');
         }
     }
@@ -93,7 +100,16 @@ class ProductsController extends ApiController
         try {
             $uid = new Uid($uidHash);
 
-            //create query
+            $product = $this->getProductQuery->getByUid($uid);
+            if (null === $product) {
+                return $this->prepareNotFoundResponse();
+            }
+            $viewObject = $this->productPresenter->present($product);
+
+            /** @todo add last modification date to store */
+            $lastModifiedDate = new \DateTime('UTC');
+
+            return $this->prepareGetSuccessResponse($viewObject, $lastModifiedDate);
         } catch (InvalidUidHashException $exception) {
             $violationList = new ConstraintViolationList([
                 new ConstraintViolation(

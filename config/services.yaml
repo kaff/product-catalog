@@ -47,3 +47,7 @@ services:
             - '@App\Repository\ProductRepository'
         tags:
             - { name: tactician.handler, command: ProductsCatalog\Application\Command\AddNewProductCommand }
+
+    ProductsCatalog\Application\Query\GetProduct\Query:
+        arguments:
+            $handler: '@App\Persistence\Handler'
