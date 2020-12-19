@@ -34,6 +34,23 @@ Feature:
     }
     """
 
+  Scenario: Response should not be cached by client
+    Given the request body is:
+    """
+    {
+      "name": "Product name",
+      "price_amount": 2345,
+      "price_currency": "PLN"
+    }
+    """
+    And the "Content-Type" request header is "application/json"
+    And the "X-Accept-Version" request header is "v2"
+    When I request "api/products" using HTTP POST
+    Then the response code is 202
+    And the "cache-control" response header matches "no-cache, no-store, private"
+    And the "expires" response header matches "0"
+    And the "pragma" response header matches "no-cache"
+
   Scenario: Receive a error message when request format is invalid
     Given the request body is:
     """
