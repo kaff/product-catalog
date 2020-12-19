@@ -30,9 +30,13 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    App\Repository\ProductRepository:
+    App\Persistence\Handler:
         arguments:
             - "%kernel.cache_dir%/storage"
+
+    App\Repository\ProductRepository:
+        arguments:
+            $handler: '@App\Persistence\Handler'
 
     App\Controller\ProductsController:
         arguments:

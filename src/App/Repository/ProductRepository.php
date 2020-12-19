@@ -4,44 +4,27 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use ProductsCatalog\Application\Persistence\Handler;
 use ProductsCatalog\Application\Repository\ProductRepository as ApplicationProductRepository;
 use ProductsCatalog\Domain\Product;
 
 class ProductRepository implements ApplicationProductRepository
 {
     /**
-     * @var string
+     * @var \ProductsCatalog\Application\Persistence\Handler
      */
-    private $storagePath;
+    private $handler;
 
-    public function __construct(string $storagePath)
+    public function __construct(Handler $handler)
     {
-        $this->storagePath = $storagePath;
+        $this->handler = $handler;
     }
 
-    public function save(Product $product): Product
+    public function save(Product $product): void
     {
-        $classes = $this->getFromStorage();
-        $classes[(string)$product->getUid()] = $product;
+        $products = $this->handler->loadAllFromStorage();
+        $products[(string)$product->getUid()] = $product;
 
-        $this->saveInStorage($classes);
-
-        return $product;
-    }
-
-    private function saveInStorage(array $data)
-    {
-        file_put_contents($this->storagePath, serialize($data));
-    }
-
-    private function getFromStorage(): array
-    {
-        $content = @file_get_contents($this->storagePath);
-
-        if (empty($content)) {
-            return [];
-        }
-
-        return unserialize($content);
+        $this->handler->saveInStorage($products);
     }
 }
