@@ -12,6 +12,8 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 abstract class ApiController extends AbstractFOSRestController
 {
+    private const CACHE_MAX_AGE = 3600;
+
     protected function prepareValidationErrorsResponse(ConstraintViolationListInterface $validationErrors): Response
     {
         $messages = $this->prepareErrorMessages($validationErrors);
@@ -59,6 +61,35 @@ abstract class ApiController extends AbstractFOSRestController
                     'Cache-Control' => 'no-cache, no-store, private',
                     'Pragma' => 'no-cache',
                     'Expires' => 0
+                ]
+            )
+        );
+    }
+
+    protected function prepareNotFoundResponse(): Response
+    {
+        return $this->handleView(
+            $this->view(
+                null,
+                Response::HTTP_NOT_FOUND
+            )
+        );
+    }
+
+    protected function prepareGetSuccessResponse($data, \DateTimeInterface $lastModified): Response
+    {
+        $expiresDate = new \DateTime('UTC');
+        $interval = new \DateInterval(sprintf('PT%sS', self::CACHE_MAX_AGE));
+        $expiresDate->add($interval);
+
+        return $this->handleView(
+            $this->view(
+                $data,
+                Response::HTTP_OK,
+                [
+                    'Last-Modified' => $lastModified->format('D, d M Y H:i:s \G\M\T'),
+                    'Cache-Control' => sprintf('max-age=%s', self::CACHE_MAX_AGE),
+                    'Expires' => $expiresDate->format('D, d M Y H:i:s \G\M\T'),
                 ]
             )
         );
