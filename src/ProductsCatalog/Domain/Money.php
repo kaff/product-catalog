@@ -20,10 +20,9 @@ final class Money
         $this->currency = $currency;
     }
 
-    private function guardAmount(int $amount)
+    private function guardAmount(int $amount): void
     {
-        if ($amount < 0)
-        {
+        if ($amount < 0) {
             throw new \InvalidArgumentException('Amount cannot be less than 0');
         }
     }
