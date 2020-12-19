@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ProductsCatalog\Shared;
 
+use ProductsCatalog\Shared\Exception\InvalidUidHashException;
+
 final class Uid
 {
     /** @var string */
@@ -28,7 +30,7 @@ final class Uid
     private function guardHashPattern(string $hash): void
     {
         if (!preg_match('/^[a-f0-9]{32}$/', $hash)) {
-            throw new \InvalidArgumentException('Given uid is invalid');
+            throw new InvalidUidHashException();
         }
     }
 

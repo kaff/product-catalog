@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Presenter\Product;
 
-use ProductsCatalog\Application\UseCase\AddNewProduct\Response;
+use ProductsCatalog\Application\Query\GetProduct\DTO;
 
 final class Presenter
 {
-    public function present(Response $response): ViewObject
+    public function present(DTO\Product $product): ViewObject
     {
         $view = new ViewObject();
-        $view->uid = (string) $response->product->getUid();
-        $view->priceAmount = $response->product->getPrice()->getAmount();
-        $view->priceCurrency = (string) $response->product->getPrice()->getCurrency();
-        $view->name = $response->product->getName();
+        $view->uid = (string) $product->uid;
+        $view->priceAmount = $product->price->getAmount();
+        $view->priceCurrency = (string) $product->price->getCurrency();
+        $view->name = $product->name;
 
         return $view;
     }

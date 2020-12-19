@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ProductsCatalog\Application\UseCase\AddNewProduct;
+namespace App\Request;
 
-class Request
+class AddNewProduct
 {
     /** @var string */
     public $name;

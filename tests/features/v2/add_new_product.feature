@@ -13,10 +13,9 @@ Feature:
     }
     """
     And the "Content-Type" request header is "application/json"
-    And the "X-Accept-Version" request header is "v1"
+    And the "X-Accept-Version" request header is "v2"
     When I request "api/products" using HTTP POST
-    Then the response code is 201
-    And the "Location" response header matches "/\/api\/products\/[a-f0-9]{32}/"
+    Then the response code is 202
     Then the response body matches:
     """
     /\"uid\": \"[a-f0-9]{32}\"/
@@ -24,13 +23,18 @@ Feature:
     And the response body contains JSON:
     """
     {
-      "name": "Product name",
-      "price_amount": 2345,
-      "price_currency": "PLN"
+        "_links": {
+            "status": {
+                "href": "//example.com/api/products/status/a7fa58d932e666ece80124199cb83ae7"
+            }
+        },
+        "status": {
+            "status": "Pending"
+        }
     }
     """
 
-  Scenario: Created product data should not be cached by client
+  Scenario: Response should not be cached by client
     Given the request body is:
     """
     {
@@ -40,9 +44,9 @@ Feature:
     }
     """
     And the "Content-Type" request header is "application/json"
-    And the "X-Accept-Version" request header is "v1"
+    And the "X-Accept-Version" request header is "v2"
     When I request "api/products" using HTTP POST
-    Then the response code is 201
+    Then the response code is 202
     And the "cache-control" response header matches "no-cache, no-store, private"
     And the "expires" response header matches "0"
     And the "pragma" response header matches "no-cache"
@@ -55,7 +59,7 @@ Feature:
     }
     """
     And the "Content-Type" request header is "application/json"
-    And the "X-Accept-Version" request header is "v1"
+    And the "X-Accept-Version" request header is "v2"
     When I request "api/products" using HTTP POST
     Then the response code is 400
     And the response body contains JSON:
@@ -76,7 +80,7 @@ Feature:
     }
     """
     And the "Content-Type" request header is "application/json"
-    And the "X-Accept-Version" request header is "v1"
+    And the "X-Accept-Version" request header is "v2"
     When I request "api/classes" using HTTP POST
     Then the response code is 400
     And the response body contains JSON:
@@ -102,7 +106,7 @@ Feature:
     }
     """
     And the "Content-Type" request header is "application/json"
-    And the "X-Accept-Version" request header is "v1"
+    And the "X-Accept-Version" request header is "v2"
     When I request "api/classes" using HTTP POST
     Then the response code is 400
     And the response body contains JSON:

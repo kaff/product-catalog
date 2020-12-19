@@ -8,5 +8,5 @@ use ProductsCatalog\Domain\Product;
 
 interface ProductRepository
 {
-    public function save(Product $product): Product;
+    public function save(Product $product): void;
 }

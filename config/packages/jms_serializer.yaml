@@ -2,6 +2,6 @@ jms_serializer:
     metadata:
         auto_detection: false
         directories:
-            products_catalog:
-                namespace_prefix: "ProductsCatalog"
+            app:
+                namespace_prefix: "App"
                 path: "%kernel.project_dir%/config/serializer"

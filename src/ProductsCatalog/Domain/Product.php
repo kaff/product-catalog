@@ -23,6 +23,7 @@ class Product
 
         $this->name = $name;
         $this->price = $price;
+        $this->uid = $uid;
 
         if (null === $uid) {
             $this->uid = new Uid();
